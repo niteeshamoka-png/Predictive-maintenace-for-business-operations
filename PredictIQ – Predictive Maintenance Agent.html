@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PredictIQ – Predictive Maintenance Agent</title>
+<style>
+:root{--bg:#f3f5fa;--card:#fff;--tx:#14213d;--mu:#667085;--bd:#e3e8f2;--ac:#4f46e5;--ac2:#06b6d4;--ok:#10b981;--wa:#f59e0b;--hi:#f97316;--cr:#ef4444;--sh:0 4px 18px rgba(30,41,90,.07);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1020;--card:#141b34;--tx:#e8ecf8;--mu:#93a0c0;--bd:#26304f;--sh:0 4px 18px rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1020;--card:#141b34;--tx:#e8ecf8;--mu:#93a0c0;--bd:#26304f;--sh:0 4px 18px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:14px}
+header{background:linear-gradient(120deg,#312e81,#4f46e5 55%,#06b6d4);color:#fff;border-radius:18px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:var(--sh)}
+header h1{margin:0;font-size:22px;letter-spacing:.2px}header p{margin:2px 0 0;opacity:.85;font-size:12.5px}
+.live{display:flex;align-items:center;gap:8px;font-size:12px;background:rgba(255,255,255,.16);padding:6px 12px;border-radius:99px}
+.dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:p 1.6s infinite}@keyframes p{50%{opacity:.25}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.k{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.k:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c,var(--ac))}
+.k small{color:var(--mu);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px}.k b{display:block;font-size:24px;margin-top:2px}.k i{font-style:normal;font-size:11.5px;color:var(--mu)}
+nav{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
+nav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:9px 16px;border-radius:99px;font-weight:600;cursor:pointer;white-space:nowrap;font-size:13px}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.g{display:grid;gap:12px}.g2{grid-template-columns:1.4fr 1fr}.g3{grid-template-columns:repeat(auto-fill,minmax(168px,1fr))}
+@media(max-width:820px){.g2{grid-template-columns:1fr}}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;box-shadow:var(--sh)}
+.c h3{margin:0 0 10px;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:8px}.c h3 span{font-size:11.5px;color:var(--mu);font-weight:500}
+.m{border:1px solid var(--bd);border-radius:14px;padding:11px;cursor:pointer;background:var(--card);transition:.15s;border-top:4px solid var(--rc)}
+.m:hover{transform:translateY(-2px);box-shadow:var(--sh)}.m.sel{outline:2px solid var(--ac)}
+.m b{font-size:13px}.m small{display:block;color:var(--mu);font-size:11.5px}
+.bar{height:6px;background:var(--bd);border-radius:9px;margin:7px 0 4px;overflow:hidden}.bar div{height:100%;border-radius:9px;background:var(--rc)}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700;color:#fff;background:var(--rc)}
+.row{display:flex;gap:8px;align-items:center;margin:7px 0;font-size:12.5px}.row .n{width:84px;color:var(--mu);flex:none}.row .bb{flex:1;height:14px;background:var(--bd);border-radius:7px;overflow:hidden}.row .bb div{height:100%;background:linear-gradient(90deg,var(--ac2),var(--ac));border-radius:7px}
+select,input[type=text]{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:9px 11px;font-size:13px;max-width:100%}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.pills button{border:1px solid var(--bd);background:transparent;color:var(--tx);padding:5px 12px;border-radius:99px;cursor:pointer;font-size:12px}.pills button.on{background:var(--ac2);color:#032;border-color:var(--ac2);font-weight:700}
+svg{width:100%;height:auto;display:block}.ax{fill:var(--mu);font-size:10px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}th{color:var(--mu);text-align:left;font-weight:600;padding:7px 6px;border-bottom:1px solid var(--bd);font-size:11px;text-transform:uppercase}td{padding:9px 6px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.tw{overflow-x:auto}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:9px;padding:6px 12px;font-weight:600;cursor:pointer;font-size:12px}.btn.d{background:var(--ok);cursor:default}
+.chat{height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px}
+.b{max-width:92%;padding:10px 13px;border-radius:14px;font-size:13px}.b.u{align-self:flex-end;background:var(--ac);color:#fff;border-bottom-right-radius:4px}.b.a{align-self:flex-start;background:var(--bg);border:1px solid var(--bd);border-bottom-left-radius:4px}
+.st{font-size:11.5px;color:var(--mu);margin:2px 0}.st b{color:var(--ac2)}
+.send{display:flex;gap:8px;margin-top:10px}.send input{flex:1;min-width:0}
+.fx{display:flex;gap:10px;flex-wrap:wrap;align-items:center}input[type=range]{flex:1;min-width:140px;accent-color:var(--ac)}
+.note{font-size:11.5px;color:var(--mu);margin-top:8px}
+</style></head><body><div class="wrap">
+<header><div><h1>PredictIQ · Predictive Maintenance Agent</h1><p>Sensors + maintenance history + production schedule → failure patterns → recommended actions (human-in-the-loop)</p></div><div class="live"><span class="dot"></span>Agent monitoring 12 assets · simulated data</div></header>
+<div class="kpis" id="kpis"></div>
+<nav id="nav"></nav>
+<div id="view"></div>
+<p class="note">All data is synthetic and generated in the browser for demonstration. Thresholds and costs are assumptions.</p>
+</div>
+<script>
+// ---------- Synthetic data ----------
+let seed=11;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+const S={vib:{n:"Vibration",u:"mm/s",b:2.2,l:7.1},tmp:{n:"Temperature",u:"°C",b:62,l:95},cur:{n:"Motor current",u:"A",b:41,l:55},prs:{n:"Pressure",u:"bar",b:6,l:4.6}};
+const MODES={vib:"Bearing wear",tmp:"Cooling / overheating",cur:"Motor overload",prs:"Seal / hydraulic leak"};
+const spec=[["M-01","CNC Mill A","Line 1",900,"vib",.95,9],["M-02","Hydraulic Press","Line 1",1400,"prs",.7,11],["M-03","Conveyor Drive","Line 2",600,"cur",.55,10],["M-04","Injection Moulder","Line 2",1100,"tmp",.85,8],["M-05","Air Compressor","Utilities",500,"prs",0,0],["M-06","CNC Lathe B","Line 1",850,"vib",.4,12],["M-07","Packaging Robot","Line 3",700,"cur",0,0],["M-08","Coolant Pump","Utilities",450,"tmp",.3,14],["M-09","Welding Cell","Line 3",1000,"cur",0,0],["M-10","Stamping Press","Line 2",1500,"vib",.62,10],["M-11","Paint Oven","Line 3",800,"tmp",0,0],["M-12","Palletiser","Line 3",550,"vib",0,0]];
+const sec=[[ "vib",1],["tmp",.25],["cur",.2],["prs",.15]];
+const norm=(k,v)=>k=="prs"?(S[k].b-v)/(S[k].b-S[k].l):(v-S[k].b)/(S[k].l-S[k].b);
+const raw=(k,n)=>k=="prs"?S[k].b-n*(S[k].b-S[k].l):S[k].b+n*(S[k].l-S[k].b);
+const MA=spec.map(([id,name,line,cost,mode,sev,st])=>{
+ const ser={};["vib","tmp","cur","prs"].forEach(k=>{const w=k==mode?1:(sev?.22:0);ser[k]=[...Array(30)].map((_,t)=>{const dg=sev&&t>st?sev*w*Math.pow((t-st)/(29-st),1.7):0;return raw(k,.06+(rnd()-.5)*.1+dg*.95)})});
+ const since=Math.round(20+rnd()*70),interval=90,hist=[];let d=since;for(let i=0;i<3;i++){d+=Math.round(60+rnd()*50);hist.push({d:d,t:["Routine inspection","Bearing replacement","Lubrication & calibration","Filter / seal change"][Math.floor(rnd()*4)],h:Math.round(2+rnd()*6)})}
+ const nn=k=>norm(k,(ser[k][29]+ser[k][28]+ser[k][27])/3);const mx=Math.max(...Object.keys(S).map(nn));
+ const pk=mode,ps=norm(pk,ser[pk][29]),sl=(ps-norm(pk,ser[pk][22]))/7;
+ const s=Math.max(0,mx)*.85+Math.min(1.3,since/interval)*.15;
+ const prob=1/(1+Math.exp(-(s-.72)*9));const rul=ps>=1?.5:sl>.004?Math.min(60,(1-ps)/sl):60;
+ const load=[...Array(14)].map((_,i)=>[5,6].includes(i%7)?Math.round(20+rnd()*20):Math.round(55+rnd()*43));
+ return{id,name,line,cost,mode,ser,since,hist,s,sl,prob,rul,health:Math.round(100*(1-Math.min(1,s))),load,ps}});
+const cls=m=>m.prob>.6?["Critical","var(--cr)"]:m.prob>.3?["High","var(--hi)"]:m.prob>.12?["Watch","var(--wa)"]:["Healthy","var(--ok)"];
+const pAt=(m,d)=>1/(1+Math.exp(-(m.s+m.sl*d*.85-.72)*9));
+const PARTS=1200,UNPL=14,PLAN=3,REPAIR=9000;
+const unplanned=(m,p)=>p*(UNPL*m.cost+REPAIR);
+function plan(m){const lim=m.rul<1?1:Math.min(14,Math.floor(m.rul));let best=0;for(let i=0;i<lim;i++)if(m.load[i]<m.load[best])best=i;
+ const c=PLAN*m.cost*m.load[best]/100+PARTS,av=unplanned(m,m.prob)-c;
+ return{day:best,load:m.load[best],cost:c,avoid:av,act:m.mode=="vib"?"Replace bearings & rebalance":m.mode=="tmp"?"Service cooling circuit":m.mode=="cur"?"Inspect motor & drive":"Replace seals, check hydraulics",pr:m.prob>.6?"P1 – Urgent":m.prob>.3?"P2 – Soon":"P3 – Planned"}}
+const recs=MA.filter(m=>m.prob>.12).sort((a,b)=>b.prob-a.prob).map(m=>({m,p:plan(m)}));
+const approved=new Set();let sel="M-01",sensor="vib",tab=0;
+const $=id=>document.getElementById(id),fmt=n=>"$"+Math.round(n).toLocaleString();
+const dayName=i=>{const d=new Date();d.setDate(d.getDate()+i);return i==0?"Today":d.toLocaleDateString("en",{weekday:"short",day:"numeric",month:"short"})};
+// ---------- UI ----------
+function kpis(){const at=MA.filter(m=>m.prob>.3).length,ex=MA.reduce((a,m)=>a+unplanned(m,m.prob),0),sv=recs.filter(r=>approved.has(r.m.id)).reduce((a,r)=>a+r.p.avoid,0);
+ $("kpis").innerHTML=[["Fleet health",Math.round(MA.reduce((a,m)=>a+m.health,0)/12)+"%","avg across 12 assets","var(--ok)"],["Assets at risk",at,"failure prob. > 30% (7d)","var(--cr)"],["Exposure",fmt(ex),"expected unplanned loss","var(--wa)"],["Actions pending",recs.length-approved.size,recs.length+" recommended","var(--ac)"],["Value approved",fmt(sv),"net loss avoided","var(--ac2)"]].map(k=>`<div class="k" style="--c:${k[3]}"><small>${k[0]}</small><b>${k[1]}</b><i>${k[2]}</i></div>`).join("")}
+function nav(){$("nav").innerHTML=["Overview","Diagnostics","Maintenance Planner","Ask the Agent"].map((t,i)=>`<button class="${i==tab?"on":""}" onclick="tab=${i};nav();render()">${t}</button>`).join("")}
+function line(m,k,pr){const a=m.ser[k],W=600,H=210,p=34,lo=Math.min(S[k].l,S[k].b,...a)*.95,hi=Math.max(S[k].l,S[k].b,...a)*1.05,N=pr?40:30;
+ const x=i=>p+i*(W-p-10)/(N-1),y=v=>H-24-(v-lo)/(hi-lo)*(H-44);let d=a.map((v,i)=>(i?"L":"M")+x(i)+","+y(v)).join(" ");
+ let pj="";if(pr&&m.sl>0){const s=(a[29]-a[22])/7;pj=`M${x(29)},${y(a[29])} L${x(39)},${y(a[29]+s*10)}`}
+ const ly=y(S[k].l);return`<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity=".35"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
+ ${[0,1,2,3].map(i=>{const v=lo+(hi-lo)*i/3;return`<line x1="${p}" x2="${W-10}" y1="${y(v)}" y2="${y(v)}" stroke="var(--bd)"/><text class="ax" x="2" y="${y(v)+3}">${v.toFixed(1)}</text>`}).join("")}
+ <rect x="${p}" y="${Math.min(ly,y(hi))}" width="${W-p-10}" height="${Math.abs(ly-(k=="prs"?y(lo):y(hi)))}" fill="var(--cr)" opacity=".07"/>
+ <line x1="${p}" x2="${W-10}" y1="${ly}" y2="${ly}" stroke="var(--cr)" stroke-dasharray="5 4"/><text class="ax" x="${W-120}" y="${ly-4}" fill="var(--cr)" style="fill:var(--cr)">failure limit ${S[k].l}${S[k].u}</text>
+ <path d="${d} L${x(29)},${H-24} L${x(0)},${H-24}Z" fill="url(#g)"/><path d="${d}" fill="none" stroke="#6366f1" stroke-width="2.4"/>
+ ${pj?`<path d="${pj}" fill="none" stroke="var(--hi)" stroke-width="2.4" stroke-dasharray="6 4"/><text class="ax" x="${x(31)}" y="${H-8}" style="fill:var(--hi)">agent forecast</text>`:""}
+ ${a.map((v,i)=>norm(k,v)>.75?`<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="var(--cr)"/>`:"").join("")}
+ <text class="ax" x="${p}" y="${H-8}">30 days ago</text><text class="ax" x="${x(29)-14}" y="${H-8}">today</text></svg>`}
+function render(){kpis();[ov,dg,pl,ag][tab]();}
+function ov(){const R=[...MA].sort((a,b)=>b.prob-a.prob);
+ const modes={};MA.forEach(m=>{if(m.prob>.12)modes[m.mode]=(modes[m.mode]||0)+m.prob});const mm=Object.entries(modes).sort((a,b)=>b[1]-a[1]),mx=mm[0]?mm[0][1]:1;
+ $("view").innerHTML=`<div class="g g2"><div class="c"><h3>Asset risk map<span>click an asset to diagnose</span></h3><div class="g g3">${MA.map(m=>{const c=cls(m);return`<div class="m ${m.id==sel?"sel":""}" style="--rc:${c[1]}" onclick="sel='${m.id}';tab=1;nav();render()"><b>${m.id} · ${m.name}</b><small>${m.line}</small><div class="bar"><div style="width:${m.health}%"></div></div><span class="tag">${c[0]}</span> <small style="display:inline">${Math.round(m.prob*100)}% · RUL ${m.rul<1?"&lt;1":m.rul>=60?"60+":Math.round(m.rul)}d</small></div>`}).join("")}</div></div>
+ <div class="g"><div class="c"><h3>Failure patterns detected<span>by agent</span></h3>${mm.map(([k,v])=>{const key=Object.keys(MODES).find(x=>MODES[x]==k);return`<div class="row"><span class="n" style="width:130px">${k}</span><div class="bb"><div style="width:${v/mx*100}%"></div></div></div><div class="st" style="margin:-3px 0 6px 138px">Signature: ${S[key].n} drifting toward ${S[key].l} ${S[key].u}</div>`}).join("")||"No patterns"}</div>
+ <div class="c"><h3>Top risks · 7-day failure probability</h3>${R.slice(0,6).map(m=>`<div class="row"><span class="n">${m.id}</span><div class="bb"><div style="width:${m.prob*100}%;background:${cls(m)[1]}"></div></div><b>${Math.round(m.prob*100)}%</b></div>`).join("")}</div></div></div>`}
+function dg(){const m=MA.find(x=>x.id==sel),c=cls(m);
+ $("view").innerHTML=`<div class="c" style="margin-bottom:12px"><div class="fx"><select onchange="sel=this.value;render()">${MA.map(x=>`<option value="${x.id}" ${x.id==sel?"selected":""}>${x.id} · ${x.name}</option>`).join("")}</select><span class="tag" style="--rc:${c[1]}">${c[0]}</span><b>${Math.round(m.prob*100)}%</b> <span class="st">failure probability within 7 days</span></div></div>
+ <div class="g g2"><div class="c"><h3>Sensor trend<span>red dots = anomaly &gt; 75% of limit</span></h3><div class="pills">${Object.keys(S).map(k=>`<button class="${k==sensor?"on":""}" onclick="sensor='${k}';dg()">${S[k].n}</button>`).join("")}</div>${line(m,sensor,1)}</div>
+ <div class="g"><div class="c"><h3>Agent diagnosis</h3><div class="row"><span class="n">Health</span><div class="bb"><div style="width:${m.health}%;background:${c[1]}"></div></div><b>${m.health}</b></div>
+ <p style="margin:6px 0"><b>Likely mode:</b> ${m.prob>.12?MODES[m.mode]:"None – normal behaviour"}<br><b>Remaining useful life:</b> ${m.rul<1?"&lt; 1 day":m.rul>=60?"60+ days":"≈ "+Math.round(m.rul)+" days"}<br><b>Since last service:</b> ${m.since} days (interval 90)<br><b>Downtime cost:</b> ${fmt(m.cost)}/hr</p></div>
+ <div class="c"><h3>Maintenance history<span>days ago</span></h3>${m.hist.map(h=>`<div class="row"><span class="n" style="width:56px">${h.d}d</span><span style="flex:1">${h.t}</span><span class="st">${h.h}h</span></div>`).join("")}</div></div></div>`}
+function pl(){const m=MA.find(x=>x.id==sel);let wi="";
+ const bars=[...Array(11)].map((_,d)=>unplanned(m,pAt(m,d))),bx=Math.max(...bars,1);
+ wi=`<div class="c" style="margin-top:12px"><h3>What-if: delay maintenance on ${m.id}<span>expected unplanned loss</span></h3><div class="fx"><select onchange="sel=this.value;pl()">${MA.map(x=>`<option value="${x.id}" ${x.id==sel?"selected":""}>${x.id} · ${x.name}</option>`).join("")}</select><input type="range" min="0" max="10" value="${window.dl||0}" oninput="window.dl=+this.value;wf()"><b id="dv"></b></div><div id="wf"></div></div>`;
+ $("view").innerHTML=`<div class="c"><h3>Recommended actions<span>scheduled into the lowest-load window before predicted failure</span></h3><div class="tw"><table><tr><th>Asset</th><th>Action</th><th>Priority</th><th>Window</th><th>Line load</th><th>Net saving</th><th></th></tr>${recs.map(r=>`<tr><td><b>${r.m.id}</b><br><span class="st">${r.m.name}</span></td><td>${r.p.act}</td><td><span class="tag" style="--rc:${cls(r.m)[1]}">${r.p.pr}</span></td><td>${r.m.rul<1?"Immediate":dayName(r.p.day)}</td><td>${r.p.load}%</td><td><b>${fmt(r.p.avoid)}</b></td><td><button class="btn ${approved.has(r.m.id)?"d":""}" onclick="ap('${r.m.id}')">${approved.has(r.m.id)?"Approved ✓":"Approve"}</button></td></tr>`).join("")}</table></div><p class="note">Human-in-the-loop: the agent proposes, the maintenance manager approves. Net saving = expected unplanned loss − planned cost (parts + planned downtime × line load).</p></div>${wi}`;wf()}
+function wf(){if(!$("wf"))return;const m=MA.find(x=>x.id==sel),d=window.dl||0,pp=pAt(m,d),L=unplanned(m,pp),b0=unplanned(m,m.prob);
+ $("dv").textContent=d?`Delay ${d} d`:"Act now";
+ const bars=[...Array(11)].map((_,i)=>unplanned(m,pAt(m,i))),mx=Math.max(...bars,1);
+ $("wf").innerHTML=`<p style="margin:10px 0"><b>${Math.round(pp*100)}%</b> failure probability · exposure <b>${fmt(L)}</b> ${d?`(<span style="color:var(--cr)">+${fmt(Math.max(0,L-b0))}</span> vs acting now)`:""}</p><svg viewBox="0 0 600 120">${bars.map((v,i)=>`<rect x="${12+i*53}" y="${100-v/mx*85}" width="38" height="${v/mx*85}" rx="5" fill="${i==d?"var(--hi)":"var(--ac)"}" opacity="${i==d?1:.55}"/><text class="ax" x="${22+i*53}" y="114">${i}d</text>`).join("")}</svg>`}
+function ap(id){approved.add(id);render()}
+// ---------- Agent ----------
+const chat=[{r:"a",h:"Hello – I’m the maintenance agent. I watch sensors, service history and the production calendar. Try a suggestion below or ask about any machine (e.g. “M-04”)."}];
+const SUG=["Which machine is most at risk?","Show the maintenance plan","What are the failure patterns?","What is the ROI?","Explain M-04","Approve all urgent actions"];
+function ag(){$("view").innerHTML=`<div class="c"><h3>Conversational agent<span>Perceive → Analyse → Plan → Act</span></h3><div class="chat" id="ch">${chat.map(b=>`<div class="b ${b.r}">${b.h}</div>`).join("")}</div><div class="pills">${SUG.map(s=>`<button onclick="ask('${s}')">${s}</button>`).join("")}</div><div class="send"><input type="text" id="q" placeholder="Ask the agent…" onkeydown="if(event.key=='Enter')ask()"><button class="btn" onclick="ask()">Send</button></div></div>`;const c=$("ch");c.scrollTop=c.scrollHeight}
+function steps(a){return a.map((s,i)=>`<div class="st"><b>${["Perceive","Analyse","Plan","Act"][i]}</b> · ${s}</div>`).join("")}
+function reply(q){q=q.toLowerCase();const id=(q.match(/m-?(\d{1,2})/)||[])[1],top=recs[0];
+ if(id){const m=MA.find(x=>x.id=="M-"+id.padStart(2,"0"));if(m){sel=m.id;const p=plan(m),c=cls(m);return steps([`Read 4 sensor streams, ${m.hist.length} service records, 14-day load plan for ${m.id}`,`Health ${m.health}/100, ${Math.round(m.prob*100)}% 7-day failure probability (${c[0]})`,m.prob>.12?`${MODES[m.mode]} pattern; best window ${dayName(p.day)} at ${p.load}% load`:"No action needed",m.prob>.12?`Recommend: ${p.act}. Net saving ${fmt(p.avoid)}`:"Continue monitoring"])+`<br><b>${m.name}</b> is <b>${c[0].toLowerCase()}</b>. ${m.prob>.12?`Open the Planner to approve the action.`:`All sensors are within normal bands.`}`}}
+ if(/risk|worst|critical|urgent first/.test(q)&&!/approve/.test(q))return steps(["Scored all 12 assets from the latest 3-day sensor averages","Ranked by failure probability and downtime cost",`${top.m.id} leads with ${Math.round(top.m.prob*100)}%`,"Prepared a ranked action list"])+`<br>Most at risk: <b>${top.m.id} ${top.m.name}</b> (${Math.round(top.m.prob*100)}%, ${MODES[top.m.mode]}). Next: ${recs.slice(1,4).map(r=>r.m.id+" ("+Math.round(r.m.prob*100)+"%)").join(", ")}.`;
+ if(/plan|schedule|window/.test(q))return steps(["Loaded production schedule for the next 14 days","Matched RUL against lowest-load days","Costed planned vs unplanned downtime","Queued proposals for approval"])+`<br>`+recs.slice(0,5).map(r=>`• <b>${r.m.id}</b>: ${r.p.act} – ${r.m.rul<1?"immediately":dayName(r.p.day)} (${r.p.load}% load)`).join("<br>");
+ if(/pattern|why|cause|mode/.test(q)){const o={};recs.forEach(r=>o[MODES[r.m.mode]]=(o[MODES[r.m.mode]]||[]).concat(r.m.id));return steps(["Compared sensor drift across at-risk assets","Clustered by dominant sensor signature","Mapped clusters to failure modes","Flagged recurring modes for root-cause review"])+`<br>`+Object.entries(o).map(([k,v])=>`• <b>${k}</b>: ${v.join(", ")}`).join("<br>")}
+ if(/roi|saving|cost|value/.test(q)){const t=recs.reduce((a,r)=>a+r.p.avoid,0),pc=recs.reduce((a,r)=>a+r.p.cost,0);return steps(["Summed expected unplanned loss","Subtracted planned parts and downtime","Computed return on the plan","Compared with approved value"])+`<br>Acting on all ${recs.length} recommendations costs about <b>${fmt(pc)}</b> and avoids <b>${fmt(t)}</b> net, roughly <b>${(t/pc+1).toFixed(1)}x</b> return.`}
+ if(/approve/.test(q)){const u=recs.filter(r=>r.m.prob>.3);u.forEach(r=>approved.add(r.m.id));return steps(["Selected P1 and P2 actions","Checked for schedule conflicts: none","Marked as approved","Work orders ready to dispatch"])+`<br>Approved <b>${u.length}</b> actions (${u.map(r=>r.m.id).join(", ")}). Dashboard totals updated.`}
+ return"I can rank risks, explain a machine (try “M-03”), show the plan, failure patterns, ROI, or approve urgent actions."}
+function ask(t){const i=$("q"),q=t||i.value.trim();if(!q)return;chat.push({r:"u",h:q.replace(/</g,"&lt;")});ag();setTimeout(()=>{chat.push({r:"a",h:reply(q)});kpis();ag()},450)}
+nav();render();
+</script></body></html>
